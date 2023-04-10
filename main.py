@@ -65,6 +65,43 @@ label6.grid(row=5, column=0, padx=5, pady=5, sticky="W")
 entry6 = ttk.Entry(middle_frame, width=20)
 entry6.grid(row=5, column=1, padx=5, pady=5)
 
+# İlaç bilgilerini göstermek için orta bölümdeki textbox'lar
+name_var = tk.StringVar()
+name_label = ttk.Label(root, text="İlaç Adı:")
+name_label.pack()
+name_entry = ttk.Entry(root, textvariable=name_var)
+name_entry.pack()
+
+type_var = tk.StringVar()
+type_label = ttk.Label(root, text="İlaç Türü:")
+type_label.pack()
+type_entry = ttk.Entry(root, textvariable=type_var)
+type_entry.pack()
+
+price_var = tk.StringVar()
+price_label = ttk.Label(root, text="Fiyat:")
+price_label.pack()
+price_entry = ttk.Entry(root, textvariable=price_var)
+price_entry.pack()
+
+stock_var = tk.StringVar()
+stock_label = ttk.Label(root, text="Stok Miktarı:")
+stock_label.pack()
+stock_entry = ttk.Entry(root, textvariable=stock_var)
+stock_entry.pack()
+
+producer_var = tk.StringVar()
+producer_label = ttk.Label(root, text="Üretici Firma:")
+producer_label.pack()
+producer_entry = ttk.Entry(root, textvariable=producer_var)
+producer_entry.pack()
+
+description_var = tk.StringVar()
+description_label = ttk.Label(root, text="Açıklama:")
+description_label.pack()
+description_entry = ttk.Entry(root, textvariable=description_var)
+description_entry.pack()
+
 # Sağdaki PictureBox ve etiketler
 right_frame = tk.Frame(root)
 right_frame.pack(side="left", padx=10, pady=10)
@@ -114,5 +151,31 @@ def search():
 # Ara butonuna tıklandığında search() fonksiyonunu çalıştır
 search_button.config(command=search)
 
+# Listbox'tan bir ilaç ismi seçildiğinde ilaç bilgilerini göster
+
+
+def show_info(event):
+    # Seçilen ilaç ismini al
+    selection = event.widget.curselection()
+    if selection:
+        index = selection[0]
+        item = event.widget.get(index)
+
+        # İlaç bilgilerini veritabanından çek
+        query = f"SELECT * FROM ILACLAR WHERE ILAC_ADI = '{item}'"
+        cursor.execute(query)
+        result = cursor.fetchone()
+
+        # İlaç bilgilerini textbox'lara yerleştir
+        name_var.set(result[1])
+        type_var.set(result[2])
+        price_var.set(str(result[3]))
+        stock_var.set(str(result[4]))
+        producer_var.set(result[5])
+        description_var.set(result[6])
+
+
+# Listbox'a tıklama olayını dinle
+listbox.bind('<<ListboxSelect>>', show_info)
 
 root.mainloop()
